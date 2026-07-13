@@ -428,6 +428,25 @@ test('gpt-5.4 family uses provider-specific context and output caps', () => {
   })
 })
 
+test('gpt-5.6 family reports the full API context (no invented Codex cap)', () => {
+  process.env.CLAUDE_CODE_USE_OPENAI = '1'
+  delete process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS
+  delete process.env.OPENAI_MODEL
+
+  // gpt-5.6 (sol/terra/luna) follow the gpt-5.4 pattern: the descriptor carries
+  // the documented 1M API context. gpt-5.5's 272k is an empirical exception
+  // from a measured Codex-route 500 (issue #1118); no such measurement exists
+  // for gpt-5.6, so we do not fabricate a lower Codex cap. If a #1118-style
+  // incident surfaces, pin the descriptor then, exactly as gpt-5.5 was.
+  for (const model of ['gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna']) {
+    expect(getContextWindowForModel(model)).toBe(1_000_000)
+    expect(getModelMaxOutputTokens(model)).toEqual({
+      default: 128_000,
+      upperLimit: 128_000,
+    })
+  }
+})
+
 test('gpt-5.4 family keeps large max output overrides within provider limits', () => {
   process.env.CLAUDE_CODE_USE_OPENAI = '1'
   process.env.CLAUDE_CODE_MAX_OUTPUT_TOKENS = '200000'

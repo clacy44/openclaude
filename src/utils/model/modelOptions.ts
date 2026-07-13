@@ -414,6 +414,21 @@ function getCodexSparkOption(): ModelOption {
 function getCodexModelOptions(): ModelOption[] {
   return [
     {
+      value: 'gpt-5.6-sol',
+      label: 'gpt-5.6-sol',
+      description: 'GPT-5.6 Sol with high reasoning',
+    },
+    {
+      value: 'gpt-5.6-terra',
+      label: 'gpt-5.6-terra',
+      description: 'GPT-5.6 Terra with high reasoning',
+    },
+    {
+      value: 'gpt-5.6-luna',
+      label: 'gpt-5.6-luna',
+      description: 'GPT-5.6 Luna with high reasoning',
+    },
+    {
       value: 'gpt-5.5',
       label: 'gpt-5.5',
       description: 'GPT-5.5 with high reasoning',

@@ -45,6 +45,20 @@ describe('providerConfig — Codex alias lookup is prototype-safe', () => {
     expect(shouldUseCodexTransport('claude-opus-4-8', undefined)).toBe(false)
   })
 
+  // gpt-5.6 (sol/terra/luna) is intentionally NOT a CODEX_ALIAS_MODELS entry so
+  // the OpenAI/Azure Responses auto-route (modelRequiresResponsesApi) wins for
+  // API-key users; the ChatGPT-subscription path reaches Codex via the Codex
+  // base URL, not the alias. Reasoning-effort support still holds through the
+  // gpt-5 regex, matching how gpt-5.5 is treated for effort selection.
+  test('gpt-5.6 supports Codex reasoning effort without an alias entry', () => {
+    for (const model of ['gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna']) {
+      expect(isCodexAlias(model)).toBe(false)
+      expect(supportsCodexReasoningEffort(model)).toBe(true)
+    }
+    // Parity with gpt-5.5's effort treatment.
+    expect(supportsCodexReasoningEffort('gpt-5.5')).toBe(true)
+  })
+
   // getReasoningEffortForModel indexes the same map (feeds supportsCodexReasoningEffort,
   // /effort, EffortPicker). It must be prototype-safe too. `constructor` /
   // `__proto__` carry no `.reasoningEffort`, so to prove the own-property guard
